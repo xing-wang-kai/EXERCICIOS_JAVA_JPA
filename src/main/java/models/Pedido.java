@@ -24,13 +24,13 @@ public class Pedido {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	private LocalDate date = LocalDate.now();
-	@Column(name="valor_total")
-	private BigDecimal valorTotal;
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Cliente cliente;
 	@OneToMany(mappedBy="pedido", cascade=CascadeType.ALL)
 	@Column(name="items")
 	private List<ItensPedido> items = new ArrayList<>();
+	@Column(name="valor_total")
+	private BigDecimal valorTotal = this.setValorTotal(items);
 	
 	public Pedido() {
 
@@ -51,8 +51,11 @@ public class Pedido {
 		return this.cliente;
 	}
 
-	public void setValorTotal(BigDecimal valor) {
-		this.valorTotal = valor;
+	public BigDecimal setValorTotal(List<ItensPedido> valor) {
+		valor.stream().forEach(v ->{
+			this.valorTotal = this.valorTotal.add(v.getProduto().getPreco());
+		});
+		return valorTotal;
 	}
 
 	public void setCliente(Cliente valor) {
@@ -61,6 +64,7 @@ public class Pedido {
 	public void adicionarItens(ItensPedido item) {
 		item.setPedido(this);
 		this.items.add(item);
+		this.valorTotal = this.valorTotal.add(item.getValor());
 	}
 
 	@Override

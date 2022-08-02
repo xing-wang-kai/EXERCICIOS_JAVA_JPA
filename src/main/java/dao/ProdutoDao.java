@@ -32,4 +32,17 @@ public class ProdutoDao {
 		
 		return (ArrayList<Produto>) this.em.createQuery(JPQL, Produto.class).getResultList();
 	}
+	
+	public void alterar(Produto produto, Long id) {
+		
+		em.flush();
+		Produto antigoProduto = this.findById(id);
+		System.out.println(antigoProduto);
+		antigoProduto.setNome(produto.getNome());
+		antigoProduto.setDescricao(produto.getDescricao());
+		antigoProduto.setPreco(produto.getPreco());
+		antigoProduto.setCategoria(produto.getCategoria());
+		System.out.println(antigoProduto);
+		
+	}
 }
